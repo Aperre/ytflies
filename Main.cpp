@@ -1,11 +1,6 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <iterator>
-#include <chrono>
-#include <thread>
-#include <algorithm>
-#include <bitset>
 #include <filesystem>
 #include "opencv2/core.hpp"
 #include "opencv2/imgproc.hpp"
