@@ -24,9 +24,15 @@ const char* outputfile;
 //Encoding the file to a video
 void encode(const char* inputfile, const char* outputfile)
 {
+	fs::path p(inputfile);
+	std::string outfilename;
+	if (outputfile == NULL)
+		outfilename = p.filename().string() + ".mp4";
+	else
+		outfilename = outputfile;
 	//Fancy print
 	char result[1024];
-	sprintf_s(result, sizeof(result), "Encoding: %s to: %s", inputfile, outputfile);
+	sprintf_s(result, sizeof(result), "Encoding: %s to: %s", inputfile, outfilename.c_str());
 	std::cout << result << std::endl;
 
 	//Get file contents
@@ -47,8 +53,6 @@ void encode(const char* inputfile, const char* outputfile)
 	}
 
 	//Create tmp folder
-	fs::path p(inputfile);
-
 	fs::create_directories(std::string("./tmp_" + p.stem().string()));
 
 
@@ -106,12 +110,6 @@ void encode(const char* inputfile, const char* outputfile)
 
 
 	//Use ffmpeg to put that up to a 24 fps video in 1280x720
-	std::string outfilename;
-	if (outputfile == NULL)
-		outfilename = p.filename().string() + ".mp4";
-	else
-		outfilename = outputfile;
-
 	system(("ffmpeg -start_number 0 -i " + std::string("./tmp_" + p.stem().string()) + "/frame_%d.jpg -r 24 -codec copy " + outfilename).c_str());
 
 	//Delete tmp folder
@@ -122,12 +120,17 @@ void encode(const char* inputfile, const char* outputfile)
 //Decoding the file
 void decode(const char* inputfile, const char* outputfile)
 {
+	fs::path p(inputfile);
+	std::string outfilename;
+	if (outputfile == NULL)
+		outfilename = p.filename().string() + ".bin";
+	else
+		outfilename = outputfile;
 	char result[1024];
-	sprintf_s(result, sizeof(result), "Decoding: %s to: %s", inputfile, outputfile);
+	sprintf_s(result, sizeof(result), "Decoding: %s to: %s", inputfile, outfilename.c_str());
 	std::cout << result << std::endl;
 
 	//Create temporary folder
-	fs::path p(inputfile);
 	fs::create_directories(std::string("./tmp_" + p.stem().string()));
 
 	//Export frames using ffmpeg
@@ -166,13 +169,6 @@ void decode(const char* inputfile, const char* outputfile)
 
 	}
 ended:
-	//Choose name
-	std::string outfilename;
-	if (outputfile == NULL)
-		outfilename = p.filename().string() + ".bin";
-	else
-		outfilename = outputfile;
-
 	//Write file
 	std::ofstream outfile(outfilename, std::ios::binary);
 	if (outfile) {
@@ -201,18 +197,34 @@ bool hasEnding (std::string const &fullString, std::string const &ending) {
     }
 }
 
+//For drag and drop on exe situations
+const char* determineInputFile(const char* def, const char* input)
+{
+	// Encode or decode
+	if ((strcmp(input, "encode") == 0) || (strcmp(input, "decode") == 0))
+		return def;
+	return input;
+}
+
+const char* determineMethod(const char* def)
+{
+	// Encode or decode
+	if ((strcmp(def, "encode") == 0) || (strcmp(def, "decode") == 0))
+		return def;
+	else if (hasEnding(std::string(def), std::string(".mp4")))
+		return "decode";
+	else
+		return "encode";
+}
+
 
 int main(int argc, char** argv)
 {
-	method = argv[1];
-	inputfile = argv[2];
+	method = determineMethod(argv[1]);
+	inputfile = determineInputFile(argv[2],argv[1]);
 	outputfile = argv[3];
+	if (strcmp(method, "encode") == 0) encode(inputfile, outputfile);
+	else if (strcmp(method, "decode") == 0) decode(inputfile, outputfile);
 
-	std::cout << hasEnding(std::string(argv[1]), std::string(".mp4")) << std::endl;
-	if (hasEnding(std::string(argv[1]), std::string(".mp4")))
-		inputfile = method;
-	std::system("PAUSE");
-	if (strcmp(method, "encode") == 0 ||  !hasEnding(std::string(argv[1]), std::string(".mp4")) )  encode(inputfile, outputfile);
-	else if (strcmp(method, "decode") == 0 || hasEnding(std::string(argv[1]), std::string(".mp4"))) decode(inputfile, outputfile);
 	return 0;
 }

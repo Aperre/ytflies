@@ -71,7 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\OpenCV\opencv\build\include\;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Learning C++\ytflies\packages\opencv.win.native.static.310.4.0\build\native\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Learning C++\ytflies\packages\opencv.win.native.static.310.4.0\build\native\lib\x64\v140\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>D:\Learning C++\ytflies\packages\opencv.win.native.static.310.4.0\build\native\lib\x64\v140\Release;D:\Learning C++\ytflies\packages\opencv.win.native.static.310.4.0\build\native\lib\x64\v140\Debug;$(LibraryPath)</LibraryPath>
@@ -121,10 +122,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>libjpegd.lib;libpngd.lib;libwebpd.lib;opencv_core310d.lib;opencv_imgcodecs310d.lib;opencv_imgproc310d.lib;libtiffd.lib;zlibd.lib;ippicvmt.lib;IlmImfd.lib;libjasperd.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
