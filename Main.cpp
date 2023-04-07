@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iterator>
 #include <chrono>
+#include <thread>
 #include <algorithm>
 #include <bitset>
 #include <filesystem>
@@ -24,15 +25,9 @@ const char* outputfile;
 //Encoding the file to a video
 void encode(const char* inputfile, const char* outputfile)
 {
-	fs::path p(inputfile);
-	std::string outfilename;
-	if (outputfile == NULL)
-		outfilename = p.filename().string() + ".mp4";
-	else
-		outfilename = outputfile;
 	//Fancy print
 	char result[1024];
-	sprintf_s(result, sizeof(result), "Encoding: %s to: %s", inputfile, outfilename.c_str());
+	sprintf_s(result, sizeof(result), "Encoding: %s to: %s", inputfile, outputfile);
 	std::cout << result << std::endl;
 
 	//Get file contents
@@ -53,6 +48,8 @@ void encode(const char* inputfile, const char* outputfile)
 	}
 
 	//Create tmp folder
+	fs::path p(inputfile);
+
 	fs::create_directories(std::string("./tmp_" + p.stem().string()));
 
 
@@ -110,6 +107,12 @@ void encode(const char* inputfile, const char* outputfile)
 
 
 	//Use ffmpeg to put that up to a 24 fps video in 1280x720
+	std::string outfilename;
+	if (outputfile == NULL)
+		outfilename = p.filename().string() + ".mp4";
+	else
+		outfilename = outputfile;
+
 	system(("ffmpeg -start_number 0 -i " + std::string("./tmp_" + p.stem().string()) + "/frame_%d.jpg -r 24 -codec copy " + outfilename).c_str());
 
 	//Delete tmp folder
@@ -120,17 +123,12 @@ void encode(const char* inputfile, const char* outputfile)
 //Decoding the file
 void decode(const char* inputfile, const char* outputfile)
 {
-	fs::path p(inputfile);
-	std::string outfilename;
-	if (outputfile == NULL)
-		outfilename = p.filename().string() + ".bin";
-	else
-		outfilename = outputfile;
 	char result[1024];
-	sprintf_s(result, sizeof(result), "Decoding: %s to: %s", inputfile, outfilename.c_str());
+	sprintf_s(result, sizeof(result), "Decoding: %s to: %s", inputfile, outputfile);
 	std::cout << result << std::endl;
 
 	//Create temporary folder
+	fs::path p(inputfile);
 	fs::create_directories(std::string("./tmp_" + p.stem().string()));
 
 	//Export frames using ffmpeg
@@ -169,6 +167,13 @@ void decode(const char* inputfile, const char* outputfile)
 
 	}
 ended:
+	//Choose name
+	std::string outfilename;
+	if (outputfile == NULL)
+		outfilename = p.filename().string() + ".bin";
+	else
+		outfilename = outputfile;
+
 	//Write file
 	std::ofstream outfile(outfilename, std::ios::binary);
 	if (outfile) {
@@ -188,43 +193,12 @@ ended:
 	fs::remove_all(std::string("./tmp_" + p.stem().string()));
 }
 
-//https://stackoverflow.com/questions/874134/find-out-if-string-ends-with-another-string-in-c
-bool hasEnding (std::string const &fullString, std::string const &ending) {
-    if (fullString.length() >= ending.length()) {
-        return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
-    } else {
-        return false;
-    }
-}
-
-//For drag and drop on exe situations
-const char* determineInputFile(const char* def, const char* input)
-{
-	// Encode or decode
-	if ((strcmp(input, "encode") == 0) || (strcmp(input, "decode") == 0))
-		return def;
-	return input;
-}
-
-const char* determineMethod(const char* def)
-{
-	// Encode or decode
-	if ((strcmp(def, "encode") == 0) || (strcmp(def, "decode") == 0))
-		return def;
-	else if (hasEnding(std::string(def), std::string(".mp4")))
-		return "decode";
-	else
-		return "encode";
-}
-
-
 int main(int argc, char** argv)
 {
-	method = determineMethod(argv[1]);
-	inputfile = determineInputFile(argv[2],argv[1]);
+	method = argv[1];
+	inputfile = argv[2];
 	outputfile = argv[3];
 	if (strcmp(method, "encode") == 0) encode(inputfile, outputfile);
 	else if (strcmp(method, "decode") == 0) decode(inputfile, outputfile);
-
 	return 0;
 }
