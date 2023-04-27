@@ -108,7 +108,7 @@ void encode(const char* inputfile, const char* outputfile)
 	else
 		outfilename = outputfile;
 
-	system(("ffmpeg -start_number 0 -i " + std::string("./tmp_" + p.stem().string()) + "/frame_%d.jpg -r 24 -codec copy " + outfilename).c_str());
+	system(("ffmpeg -start_number 0 -i " + std::string("./tmp_" + p.stem().string()) + "/frame_%d.jpg -codec copy " + outfilename).c_str());
 
 	//Delete tmp folder
 	fs::remove_all(std::string("./tmp_" + p.stem().string()));
