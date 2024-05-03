@@ -69,7 +69,7 @@ void encode(const char* inputfile, const char* outputfile)
 
 				if (currentbit < size(boolArray))
 				{
-					//True = white pixel Flase = black pixel
+					//True = white pixel False = black pixel
 
 					if (boolArray[currentbit])
 						image.at<cv::Vec3b>(y, x) = cv::Vec3b(255, 255, 255);
