@@ -36,7 +36,7 @@ python yt-flies.py path/to/document.pdf
 - Use this tool responsibly and respect legal and ethical boundaries regarding data concealment and transmission.
 
 ### License
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the GPL v3.0 License - see the LICENSE file for details.
 
 ### Author
 - Ape
