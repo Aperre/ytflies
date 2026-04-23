@@ -39,6 +39,7 @@ Convert a PDF file named `document.pdf` into an MP4:
 ### Notes
 - Ensure the file size does not exceed typical MP4 size limits to avoid compatibility issues.
 - Use this tool responsibly and respect legal and ethical boundaries regarding data concealment and transmission.
+- This project is a learning oportunity for me. The code is not the best. Change it to your will.
 
 ### License
 This project is licensed under the GPL v3.0 License - see the LICENSE file for details.
